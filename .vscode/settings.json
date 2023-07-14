@@ -1,0 +1,7 @@
+{
+    "Lua.diagnostics.disable": [
+        "trailing-space",
+        "duplicate-set-field"
+    ],
+    "Lua.runtime.version": "LuaJIT"
+}
