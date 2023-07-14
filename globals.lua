@@ -7,3 +7,5 @@ Project = {
   name = "Untitled Project",
   frames = {}
 }
+
+CurrentFrame = 1

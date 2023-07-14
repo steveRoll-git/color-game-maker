@@ -3,9 +3,7 @@ local lg = love.graphics
 
 local inky = require "inky"
 
-local ui = {}
-
-ui.scrollBar = inky.defineElement(function(self, scene)
+local function useClick(self)
   self.props.hovering = false
   self.props.down = false
 
@@ -15,6 +13,12 @@ ui.scrollBar = inky.defineElement(function(self, scene)
   self:onPointerExit(function(element, pointer)
     self.props.hovering = false
   end)
+end
+
+local ui = {}
+
+ui.scrollBar = inky.defineElement(function(self, scene)
+  useClick(self)
 
   self:onPointer("press", function(element, pointer, ...)
     self.props.down = true
@@ -32,7 +36,16 @@ ui.scrollBar = inky.defineElement(function(self, scene)
 end)
 
 ui.framePreview = inky.defineElement(function(self, scene)
+  useClick(self)
+
+  self:onPointer("press", function(element, pointer, ...)
+    CurrentFrame = self.props.frameId
+  end)
+
   return function(_, x, y, w, h)
+    lg.setColor(1, 1, 1, CurrentFrame == self.props.frameId and 0.3 or (self.props.hovering and 0.1 or 0))
+    lg.rectangle("fill", x, y, w, h)
+
     local targetH = h / 4 * 3
     local scale = targetH / FrameHeight
     local targetW = FrameWidth * scale
