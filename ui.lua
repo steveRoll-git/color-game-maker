@@ -82,7 +82,7 @@ ui.framesPanel = inky.defineElement(function(self, scene)
   end
 
   self:onPointer("wheelmoved", function(element, pointer, x, y)
-    setScroll(self.props.scrollY - y * 60)
+    setScroll(self.props.scrollY - y * self.props.frameH / 4 * 3)
   end)
 
   scrollBar:onPointer("move", function(element, pointer, dx, dy)
@@ -104,12 +104,12 @@ ui.framesPanel = inky.defineElement(function(self, scene)
     lg.rectangle("fill", x, y, w, h)
 
     local frameY = y - self.props.scrollY
-    local frameH = w * self.props.frameHeightRatio
-    self.props.contentH = MaxFrames * frameH
+    self.props.frameH = w * self.props.frameHeightRatio
+    self.props.contentH = MaxFrames * self.props.frameH
 
     for i = 1, MaxFrames do
-      frameElements[i]:render(x, frameY, w - self.props.scrollBarW, frameH)
-      frameY = frameY + frameH
+      frameElements[i]:render(x, frameY, w - self.props.scrollBarW, self.props.frameH)
+      frameY = frameY + self.props.frameH
     end
 
     scrollBar:render(
