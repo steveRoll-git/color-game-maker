@@ -5,6 +5,32 @@ local inky = require "inky"
 
 local ui = {}
 
+ui.scrollBar = inky.defineElement(function(self, scene)
+  self.props.hovering = false
+  self.props.down = false
+
+  self:onPointerEnter(function(element, pointer)
+    self.props.hovering = true
+  end)
+  self:onPointerExit(function(element, pointer)
+    self.props.hovering = false
+  end)
+
+  self:onPointer("press", function(element, pointer, ...)
+    self.props.down = true
+    pointer:captureElement(self, true)
+  end)
+  self:onPointer("release", function(element, pointer, ...)
+    self.props.down = false
+    pointer:captureElement(self, false)
+  end)
+
+  return function(_, x, y, w, h)
+    lg.setColor(1, 1, 1, self.props.down and 0.8 or (self.props.hovering and 0.6 or 0.4))
+    lg.rectangle("fill", x, y, w, h, math.min(w, h) / 2)
+  end
+end)
+
 ui.framePreview = inky.defineElement(function(self, scene)
   return function(_, x, y, w, h)
     local targetH = h / 4 * 3
@@ -22,6 +48,9 @@ ui.framePreview = inky.defineElement(function(self, scene)
       local image = Project.frames[self.props.frameId].image
       lg.setColor(1, 1, 1)
       lg.draw(image, imageX, imageY)
+    else
+      lg.setColor(0, 0, 0)
+      lg.rectangle("fill", imageX, imageY, targetW, targetH)
     end
 
     local font = self.props.font or love.graphics.getFont()
@@ -42,18 +71,52 @@ ui.framesPanel = inky.defineElement(function(self, scene)
     table.insert(frameElements, frame)
   end
 
+  local scrollBar = ui.scrollBar(scene)
+  self.props.scrollBarW = 12
+
+  self.props.scrollY = 0
+
+  local function setScroll(y)
+    local _, _, _, h = self:getView()
+    self.props.scrollY = math.min(math.max(y, 0), self.props.contentH - h)
+  end
+
+  self:onPointer("wheelmoved", function(element, pointer, x, y)
+    setScroll(self.props.scrollY - y * 60)
+  end)
+
+  scrollBar:onPointer("move", function(element, pointer, dx, dy)
+    if scrollBar.props.down then
+      local _, barY, _, _ = scrollBar:getView()
+      local _, _, _, h = self:getView()
+      local newY = barY + dy
+      setScroll(newY / h * self.props.contentH)
+    end
+  end)
+
+  self:on("resize", function(element, ...)
+    -- so that invalid scroll positions will not happen
+    setScroll(self.props.scrollY)
+  end)
+
   return function(_, x, y, w, h)
     lg.setColor(0.5, 0.5, 0.5, 0.5)
     lg.rectangle("fill", x, y, w, h)
 
-    local frameY = y
+    local frameY = y - self.props.scrollY
     local frameH = w * self.props.frameHeightRatio
-    local contentH = MaxFrames * frameH
-    
+    self.props.contentH = MaxFrames * frameH
+
     for i = 1, MaxFrames do
-      frameElements[i]:render(x, frameY, w, frameH)
+      frameElements[i]:render(x, frameY, w - self.props.scrollBarW, frameH)
       frameY = frameY + frameH
     end
+
+    scrollBar:render(
+      x + w - self.props.scrollBarW,
+      (self.props.scrollY / self.props.contentH) * h,
+      self.props.scrollBarW,
+      h / self.props.contentH * h)
   end
 end)
 
