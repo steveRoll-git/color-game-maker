@@ -275,8 +275,6 @@ ui.imageEditor = inky.defineElement(function(self, scene)
   end
 
   self:onPointer("press", function(element, pointer, ...)
-    clickPointerPress(self, pointer)
-
     prepareFrame()
     local ix, iy = screenToImage(pointer)
     self.props.prevX, self.props.prevY = ix, iy
