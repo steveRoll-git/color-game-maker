@@ -148,18 +148,17 @@ do
 		---@type Inky.Element[]
 		local elements = {}
 
-		for i = 1, self._overlappingElements:count() do
-			---@type Inky.Element
-			local element = self._overlappingElements:getByIndex(i)
-			elements[i] = element
-		end
-
-		for i = 1, self._capturedElements:count() do
-			---@type Inky.Element
-			local element = self._capturedElements:getByIndex(i)
-
-			if (not self._overlappingElements:has(element)) then
-				elements[#elements + 1] = element
+		if self._capturedElements:count() > 0 then
+			for i = 1, self._capturedElements:count() do
+				---@type Inky.Element
+				local element = self._capturedElements:getByIndex(i)
+				elements[i] = element
+			end
+		else
+			for i = 1, self._overlappingElements:count() do
+				---@type Inky.Element
+				local element = self._overlappingElements:getByIndex(i)
+				elements[i] = element
 			end
 		end
 
