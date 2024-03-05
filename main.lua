@@ -5,23 +5,22 @@ lg.setDefaultFilter("linear", "nearest")
 
 require "globals"
 local palette = require "palette"
-local ui = require "ui"
 
 local inky = require "inky"
 
 local scene = inky.scene()
 local pointer = inky.pointer(scene)
 
-local framesPanel = ui.framesPanel(scene)
+local framesPanel = require "ui.framesPanel" (scene)
 framesPanel.props.frameHeightRatio = 0.48
 
 local framesPanelWidth = 200
 
-local imageEditor = ui.imageEditor(scene)
+local imageEditor = require "ui.imageEditor" (scene)
 
 local paletteSquareSizes = { 36, 28, 16, 8 }
 
-local palettePanel = ui.palettePanel(scene)
+local palettePanel = require "ui.palettePanel" (scene)
 palettePanel.props.squareSize = paletteSquareSizes[1]
 palettePanel.props.columns = #palette / 2
 
