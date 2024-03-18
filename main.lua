@@ -24,6 +24,17 @@ local palettePanel = require "ui.palettePanel" (scene)
 palettePanel.props.squareSize = paletteSquareSizes[1]
 palettePanel.props.columns = #palette / 2
 
+local menuBar = require "ui.menuBar" (scene)
+menuBar.props.items = {
+  {
+    text = "Project"
+  },
+  {
+    text = "Slide"
+  },
+}
+local menuBarHeight = 26
+
 local paletteEditorMargin = 32
 
 local frameScale = 1
@@ -104,7 +115,9 @@ function love.draw()
 
   palettePanel:render(editorX + editorW / 2 - paletteW / 2, contentY + editorH + paletteEditorMargin, paletteW, paletteH)
 
-  framesPanel:render(0, 0, framesPanelWidth, love.graphics.getHeight())
+  framesPanel:render(0, menuBarHeight, framesPanelWidth, love.graphics.getHeight() - menuBarHeight)
+
+  menuBar:render(0, 0, lg.getWidth(), menuBarHeight)
 
   scene:finishFrame()
 end
