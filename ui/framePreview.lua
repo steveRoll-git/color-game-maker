@@ -5,7 +5,7 @@ local lg = love.graphics
 return inky.defineElement(function(self, scene)
   useClick(self)
 
-  self:onPointer("press", function(element, pointer, ...)
+  self:on("press", function(element, pointer, ...)
     CurrentFrame = self.props.frameId
     scene:raise("frameChange")
   end)

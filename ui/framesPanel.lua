@@ -1,16 +1,21 @@
 local inky = require "inky"
 local lg = love.graphics
 
+local useClick = require "ui.useClick"
+local useContained = require "ui.useContained"
 local scrollBar = require "ui.scrollBar"
 local framePreview = require "ui.framePreview"
 
 return inky.defineElement(function(self, scene)
+  useClick(self)
+
   ---@type Inky.Element[]
   local frameElements = {}
 
   for i = 1, MaxFrames do
     local frame = framePreview(scene)
     frame.props.frameId = i
+    useContained(frame, scene)
     table.insert(frameElements, frame)
   end
 
@@ -31,9 +36,9 @@ return inky.defineElement(function(self, scene)
   scrollBar:onPointer("move", function(element, pointer, dx, dy)
     if scrollBar.props.down then
       local _, barY, _, _ = scrollBar:getView()
-      local _, _, _, h = self:getView()
+      local _, y, _, h = self:getView()
       local newY = barY + dy
-      setScroll(newY / h * self.props.contentH)
+      setScroll((newY - y) / h * self.props.contentH)
     end
   end)
 
@@ -43,6 +48,8 @@ return inky.defineElement(function(self, scene)
   end)
 
   return function(_, x, y, w, h)
+    lg.setScissor(x, y, w, h)
+
     lg.setColor(0.5, 0.5, 0.5, 0.5)
     lg.rectangle("fill", x, y, w, h)
 
@@ -57,8 +64,10 @@ return inky.defineElement(function(self, scene)
 
     scrollBar:render(
       x + w - self.props.scrollBarW,
-      (self.props.scrollY / self.props.contentH) * h,
+      y + (self.props.scrollY / self.props.contentH) * h,
       self.props.scrollBarW,
       h / self.props.contentH * h)
+
+    lg.setScissor()
   end
 end)
