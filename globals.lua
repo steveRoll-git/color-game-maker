@@ -27,3 +27,6 @@ CurrentFrame = 1
 
 CurrentColor = 1
 CurrentToolSize = 1
+
+---@type Inky.Element?
+ActiveMenu = nil

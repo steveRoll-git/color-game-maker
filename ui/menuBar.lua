@@ -11,6 +11,7 @@ return inky.defineElement(function(self, scene)
     for _, item in ipairs(self.props.items) do
       local mbItem = menuBarItem(scene)
       mbItem.props.text = item.text
+      mbItem.props.items = item.items
       table.insert(items, mbItem)
     end
   end, "items")

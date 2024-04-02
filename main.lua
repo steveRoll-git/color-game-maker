@@ -27,10 +27,26 @@ palettePanel.props.columns = #palette / 2
 local menuBar = require "ui.menuBar" (scene)
 menuBar.props.items = {
   {
-    text = "Project"
+    text = "Project",
+    items = {
+      {
+        text = "Save",
+      },
+      {
+        text = "Open",
+      },
+    }
   },
   {
-    text = "Slide"
+    text = "Slide",
+    items = {
+      {
+        text = "Copy",
+      },
+      {
+        text = "Paste",
+      },
+    }
   },
 }
 local menuBarHeight = 26
@@ -75,6 +91,9 @@ function love.mousepressed(x, y, b)
   pointer:setPosition(x, y)
   if b == 1 then
     pointer:raise("press")
+    if ActiveMenu and not pointer:doesOverlapElement(ActiveMenu) and not pointer:doesOverlapElement(scene:__getInternal():getElementParent(ActiveMenu)) then
+      scene:__getInternal():getElementParent(ActiveMenu):__getInternal():raiseOn("closeMenu")
+    end
   end
 end
 
